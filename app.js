@@ -36,10 +36,10 @@ document.addEventListener('DOMContentLoaded', () => {
         left: Math.floor(window.screen.availWidth / 2 - width / 2) + x,
         top: Math.floor(window.screen.availHeight / 2 - height / 2) + y,
       });
-    }
+    };
 
     window.open('#leftEye', 'leftEye', getWindowFeatures(-250, 0, 250, 250));
-    window.open('#rightEye', 'rightEye', getWindowFeatures(250, 0, 250, 250))
+    window.open('#rightEye', 'rightEye', getWindowFeatures(250, 0, 250, 250));
     window.open('#mouth', 'mouth', getWindowFeatures(0, 250, 750, 250));
     window.open('#nose', 'nose', getWindowFeatures(0, 0, 250, 250));
   });
@@ -59,10 +59,8 @@ async function drawCanvas(name) {
   const ctx = canvas.getContext('2d');
 
   const loop = () => {
-
     canvas.width = window.innerWidth * 2;
     canvas.height = window.innerHeight * 2;
-
 
     const box = (() => {
       try {
@@ -72,7 +70,7 @@ async function drawCanvas(name) {
       }
     })();
     if (box) {
-      console.log(box)
+      console.log(box);
       ctx.drawImage(
         videoEl,
         box.x,
@@ -97,7 +95,13 @@ async function setupWebcam() {
   );
 
   const stream = await navigator.mediaDevices
-    .getUserMedia({ video: true, audio: false })
+    .getUserMedia({
+      video: {
+        width: { ideal: 4096 },
+        height: { ideal: 2160 },
+      },
+      audio: false,
+    })
     .catch((err) => {
       console.error(err);
       alert('To play, please enable camera access in your browser settings');
@@ -126,8 +130,6 @@ async function initFaceTracking() {
       requestAnimationFrame(loop);
       return;
     }
-
-
 
     const mouthBox = getBoundingBox(result.landmarks.getMouth());
     window.localStorage.setItem('mouth', JSON.stringify(mouthBox));
