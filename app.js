@@ -122,8 +122,8 @@ const model = faceapi.nets.tinyFaceDetector;
 
 async function initFaceTracking() {
   const videoEl = await setupWebcam();
-  await faceapi.loadFaceLandmarkModel('/models');
-  await model.load('/models');
+  await faceapi.loadFaceLandmarkModel('./models');
+  await model.load('./models');
 
   const loop = async () => {
     const result = await detectFace(videoEl);
