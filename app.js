@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     w = window.open(
       '#leftEye',
       'leftEye',
-      getWindowFeatures(-250, 0, 250, 250)
+      getWindowFeatures(-225, 0, 300, 175)
     );
     if (!w) {
       alert('Please allow popups and refresh page');
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     w = window.open(
       '#rightEye',
       'rightEye',
-      getWindowFeatures(250, 0, 250, 250)
+      getWindowFeatures(225, 0, 300, 175)
     );
     if (!w) {
       alert('Please allow popups and refresh page');
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
       alert('Please allow popups and refresh page');
       return;
     }
-    w = window.open('#nose', 'nose', getWindowFeatures(0, 0, 250, 250));
+    w = window.open('#nose', 'nose', getWindowFeatures(0, 25, 200, 275));
     if (!w) {
       alert('Please allow popups and refresh page');
       return;
@@ -126,7 +126,7 @@ async function setupWebcam() {
     .getUserMedia({
       video: {
         width: { ideal: 4096 },
-        height: { ideal: 2160 },
+        height: { ideal: 4096 },
       },
       audio: false,
     })
@@ -163,13 +163,13 @@ async function initFaceTracking() {
     const mouthBox = getBoundingBox(result.landmarks.getMouth());
     window.localStorage.setItem('mouth', JSON.stringify(mouthBox));
 
-    const noseBox = getBoundingBox(result.landmarks.getNose());
+    const noseBox = padBox(getBoundingBox(result.landmarks.getNose()), 0.15);
     window.localStorage.setItem('nose', JSON.stringify(noseBox));
 
-    const leftEyeBox = getBoundingBox(result.landmarks.getLeftEye());
+    const leftEyeBox = padBox(getBoundingBox(result.landmarks.getLeftEye()), 0.05);
     window.localStorage.setItem('leftEye', JSON.stringify(leftEyeBox));
 
-    const rightEyeBox = getBoundingBox(result.landmarks.getRightEye());
+    const rightEyeBox = padBox(getBoundingBox(result.landmarks.getRightEye()), 0.05);
     window.localStorage.setItem('rightEye', JSON.stringify(rightEyeBox));
     requestAnimationFrame(loop);
   };
@@ -184,6 +184,15 @@ function getBoundingBox(points) {
   const width = Math.max(...xs) - x;
   const height = Math.max(...ys) - y;
   return { x, y, width, height };
+}
+
+function padBox(box, percent) {
+  const newBox = { ...box };
+  newBox.x -= box.width * percent;
+  newBox.y -= box.height * percent;
+  newBox.width += box.width * percent * 2;
+  newBox.height += box.height * percent * 2;
+  return newBox;
 }
 
 /**
