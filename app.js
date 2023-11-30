@@ -27,19 +27,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   start.addEventListener('click', async () => {
     await initFaceTracking();
-    const windowFeatures = csv({
-      popup: true,
-      width: 250,
-      height: 250,
-      left: Math.floor(screen.width / 2 - 125),
-      top: Math.floor(screen.height / 2 - 125),
-    });
 
-    console.log(windowFeatures);
-    window.open('#leftEye', 'leftEye', windowFeatures);
-    window.open('#rightEye', 'rightEye', windowFeatures);
-    window.open('#mouth', 'mouth', windowFeatures);
-    window.open('#nose', 'nose', windowFeatures);
+    const getWindowFeatures = (x, y, width, height) => {
+      return csv({
+        popup: true,
+        width,
+        height,
+        left: Math.floor(window.screen.availWidth / 2 - width / 2) + x,
+        top: Math.floor(window.screen.availHeight / 2 - height / 2) + y,
+      });
+    }
+
+    window.open('#leftEye', 'leftEye', getWindowFeatures(-250, 0, 250, 250));
+    window.open('#rightEye', 'rightEye', getWindowFeatures(250, 0, 250, 250))
+    window.open('#mouth', 'mouth', getWindowFeatures(0, 250, 750, 250));
+    window.open('#nose', 'nose', getWindowFeatures(0, 0, 250, 250));
   });
 });
 
