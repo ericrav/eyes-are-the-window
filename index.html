@@ -1,19 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>start</title>
-</head>
 
-<body>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
 
-  <button id="leftEye">
-    Left Eye
-  </button>
-  <button id="rightEye">
-    Right Eye
-  </button>
+      #webcam {
+        visibility: hidden;
+      }
 
-  <script src="app.js"></script>
-</body>
+      #canvas {
+        pointer-events: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <video width="800" height="600" id="webcam" autoplay muted></video>
+    <canvas id="canvas"></canvas>
+
+    <button id="start">start</button>
+
+    <script src="https://www.unpkg.com/face-api.js@0.22.2/dist/face-api.min.js"></script>
+    <script src="app.js"></script>
+  </body>
 </html>
