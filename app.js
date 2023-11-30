@@ -40,10 +40,27 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     };
 
-    window.open('#leftEye', 'leftEye', getWindowFeatures(-250, 0, 250, 250));
-    window.open('#rightEye', 'rightEye', getWindowFeatures(250, 0, 250, 250));
-    window.open('#mouth', 'mouth', getWindowFeatures(0, 250, 750, 250));
-    window.open('#nose', 'nose', getWindowFeatures(0, 0, 250, 250));
+    let w;
+    w = window.open('#leftEye', 'leftEye', getWindowFeatures(-250, 0, 250, 250));
+    if (!w) {
+      alert('Please allow popups and refresh page');
+      return;
+    }
+    w = window.open('#rightEye', 'rightEye', getWindowFeatures(250, 0, 250, 250));
+    if (!w) {
+      alert('Please allow popups and refresh page');
+      return;
+    }
+    w = window.open('#mouth', 'mouth', getWindowFeatures(0, 250, 750, 250));
+    if (!w) {
+      alert('Please allow popups and refresh page');
+      return;
+    }
+    w = window.open('#nose', 'nose', getWindowFeatures(0, 0, 250, 250));
+    if (!w) {
+      alert('Please allow popups and refresh page');
+      return;
+    }
   });
 });
 
@@ -107,6 +124,7 @@ async function setupWebcam() {
     .catch((err) => {
       console.error(err);
       alert('To play, please enable camera access in your browser settings');
+      throw err;
     });
 
   if (!stream) return;
