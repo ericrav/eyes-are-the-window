@@ -22,6 +22,21 @@
         width: 100%;
         height: 100%;
       }
+
+      #container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #start {
+        display: none;
+      }
     </style>
   </head>
 
@@ -29,7 +44,9 @@
     <video width="800" height="600" id="webcam" autoplay muted></video>
     <canvas id="canvas"></canvas>
 
-    <button id="start">start</button>
+    <div id="container">
+      <button id="start">start</button>
+    </div>
 
     <script src="https://www.unpkg.com/face-api.js@0.22.2/dist/face-api.min.js"></script>
     <script src="app.js"></script>

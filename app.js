@@ -25,7 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
+  start.style.display = 'block';
   start.addEventListener('click', async () => {
+    start.style.display = 'none';
     await initFaceTracking();
 
     const getWindowFeatures = (x, y, width, height) => {
