@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
   const hash = window.location.hash;
-  console.log(hash);
   if (hash == '#mouth') {
     document.title = 'MOUTH';
     drawCanvas('mouth');
@@ -25,6 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
+  getBrowserWarning();
+
   start.style.display = 'block';
   start.addEventListener('click', async () => {
     start.style.display = 'none';
@@ -41,12 +42,20 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     let w;
-    w = window.open('#leftEye', 'leftEye', getWindowFeatures(-250, 0, 250, 250));
+    w = window.open(
+      '#leftEye',
+      'leftEye',
+      getWindowFeatures(-250, 0, 250, 250)
+    );
     if (!w) {
       alert('Please allow popups and refresh page');
       return;
     }
-    w = window.open('#rightEye', 'rightEye', getWindowFeatures(250, 0, 250, 250));
+    w = window.open(
+      '#rightEye',
+      'rightEye',
+      getWindowFeatures(250, 0, 250, 250)
+    );
     if (!w) {
       alert('Please allow popups and refresh page');
       return;
@@ -206,4 +215,40 @@ function getFaceDetectorOptions() {
 
 function isFaceDetectionModelLoaded() {
   return !!model.params;
+}
+
+function getBrowserWarning() {
+  const isChromium = window.chrome;
+  const winNav = window.navigator;
+  const vendorName = winNav.vendor;
+  const isOpera = typeof window.opr !== 'undefined';
+  const isIEedge = winNav.userAgent.indexOf('Edg') > -1;
+  const isIOSChrome = winNav.userAgent.match('CriOS');
+  const isArc = !!getComputedStyle(document.documentElement).getPropertyValue('--arc-palette-title');
+
+  console.log({
+    isChromium,
+    vendorName,
+    isOpera,
+    isIEedge,
+    isIOSChrome,
+    isArc,
+    huh: getComputedStyle(document.documentElement).getPropertyValue('--arc-palette-title')
+  })
+
+  if (
+    isChromium !== null &&
+    typeof isChromium !== 'undefined' &&
+    vendorName === 'Google Inc.' &&
+    isOpera === false &&
+    isIEedge === false &&
+    !isIOSChrome &&
+    !isArc
+  ) {
+    // is Google Chrome
+  } else {
+    alert(
+      'Please use Google Chrome on desktop.'
+    );
+  }
 }
