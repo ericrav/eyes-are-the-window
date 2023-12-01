@@ -36,8 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
         popup: true,
         width,
         height,
-        left: Math.floor(window.screen.availWidth / 2 - width / 2) + x,
-        top: Math.floor(window.screen.availHeight / 2 - height / 2) + y,
+        left: Math.floor(window.screen.availWidth / 2 - width / 2) + x + window.screenX,
+        top: Math.floor(window.screen.availHeight / 2 - height / 2) + y + window.screenY,
       });
     };
 
