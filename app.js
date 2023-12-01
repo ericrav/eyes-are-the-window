@@ -26,6 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   getBrowserWarning();
 
+  drawFace();
+
   start.style.display = 'block';
   start.addEventListener('click', async () => {
     start.style.display = 'none';
@@ -79,6 +81,74 @@ function csv(obj) {
     .join(',');
 }
 
+function drawFace() {
+  const canvas = /** @type {HTMLCanvasElement} */ (
+    document.getElementById('canvas')
+  );
+  const ctx = canvas.getContext('2d');
+
+  const loop = () => {
+    canvas.width = window.innerWidth * 2;
+    canvas.height = window.innerHeight * 2;
+
+    ctx.save()
+    ctx.strokeStyle = 'blue';
+    ctx.fillStyle = 'transparent';
+    ctx.lineWidth = 1;
+
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    const face = getFacePos();
+
+    ctx.beginPath();
+    const r = face ? face.width : Math.min(canvas.width, canvas.height) / 3;
+
+    const { x, y } = face ? face.center : { x: 0, y: 0 };
+    ctx.arc(x, y, r, 0, 2 * Math.PI);
+    ctx.stroke();
+
+    ctx.restore()
+    requestAnimationFrame(loop);
+  };
+
+  loop();
+}
+
+function getFacePos() {
+  const leftEye = getWindowPos('leftEye');
+  const rightEye = getWindowPos('rightEye');
+  const mouth = getWindowPos('mouth');
+  const nose = getWindowPos('nose');
+
+  if (!leftEye || !rightEye || !mouth || !nose) return null;
+
+  const center = screenToCanvas({
+    x: (leftEye.x + rightEye.x) / 2,
+    y: (leftEye.y + rightEye.y) / 2,
+  });
+
+  return {
+    center,
+    width: Math.abs((leftEye.x - leftEye.width) - (rightEye.x + rightEye.width)),
+  }
+}
+
+function screenToCanvas({ x, y }) {
+  return {
+    x: x - window.screenX - window.innerWidth / 2,
+    y: y - window.screenY - window.innerHeight / 2,
+  }
+}
+
+function getWindowPos(name) {
+  try {
+    const data = window.localStorage.getItem(name + 'Window');
+    if (!data) return null;
+    return JSON.parse(data);
+  } catch {
+    return null;
+  }
+}
+
 async function drawCanvas(name) {
   const videoEl = await setupWebcam();
   const canvas = /** @type {HTMLCanvasElement} */ (
@@ -90,6 +160,15 @@ async function drawCanvas(name) {
     canvas.width = window.innerWidth * 2;
     canvas.height = window.innerHeight * 2;
 
+    const pos = {
+      x: window.screenX + window.outerWidth*0.5,
+      y: window.screenY + window.outerHeight*0.5,
+      width: window.outerWidth,
+      height: window.outerHeight,
+    };
+    console.log(pos);
+    window.localStorage.setItem(name + 'Window', JSON.stringify(pos));
+
     const box = (() => {
       try {
         return JSON.parse(window.localStorage.getItem(name));
@@ -98,7 +177,6 @@ async function drawCanvas(name) {
       }
     })();
     if (box) {
-      console.log(box);
       ctx.drawImage(
         videoEl,
         box.x,
