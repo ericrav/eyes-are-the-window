@@ -102,27 +102,30 @@ function drawFace() {
     const r = face ? face.width : Math.min(canvas.width, canvas.height) / 3;
     const { x, y } = face ? face.center : { x: 0, y: 0 };
 
-    const leftEarHeight = r * 0.25;
+    const leftEarHeight = face ? face.leftEye.height*1.5 : r * 0.25;
+    const rightEarHeight = face ? face.rightEye.height*1.5 : r * 0.25;
     const earWidth = r * 0.1;
 
-    const chin = face ? { x: face.mouth.x, y: face.mouth.y + r*0.5, height: face.mouth.height } : { x, y: r, height: 0 };
+    const chin = face ? { x: face.mouth.x, y: face.mouth.y + face.mouth.height*1.5, height: face.mouth.height } : { x, y: r, height: 0 };
+
+    const topX = face ? face.nose.x : x;
 
     ctx.beginPath();
-    ctx.moveTo(x, y - r);
+    ctx.moveTo(topX, y - r);
     ctx.quadraticCurveTo(x-r, y-r, x - r, y);
 
     ctx.quadraticCurveTo(x - r, y - leftEarHeight, x - r - earWidth, y - leftEarHeight);
     ctx.quadraticCurveTo(x - r - earWidth*2, y - leftEarHeight, x - r - earWidth, y + leftEarHeight*0.75);
     ctx.quadraticCurveTo(x - r, y + leftEarHeight*1.75, x - r, y + leftEarHeight*0.75);
 
-    ctx.quadraticCurveTo(x - r, y + chin.y + chin.height, chin.x, chin.y);
-    ctx.quadraticCurveTo(x + r, y + chin.y + chin.height, x + r, y + leftEarHeight*0.75);
+    ctx.bezierCurveTo(x - r, y + r, chin.x - chin.height*0.5, chin.y, chin.x, chin.y + chin.height*0.25);
+    ctx.bezierCurveTo(chin.x + chin.height*0.5, chin.y, x + r, y + r, x + r, y + rightEarHeight*0.75);
 
-    ctx.quadraticCurveTo(x + r, y + leftEarHeight*1.75, x + r + earWidth, y + leftEarHeight*0.75);
-    ctx.quadraticCurveTo(x + r + earWidth*2, y - leftEarHeight, x + r + earWidth, y - leftEarHeight);
-    ctx.quadraticCurveTo(x + r, y - leftEarHeight, x + r, y);
+    ctx.quadraticCurveTo(x + r, y + rightEarHeight*1.75, x + r + earWidth, y + rightEarHeight*0.75);
+    ctx.quadraticCurveTo(x + r + earWidth*2, y - rightEarHeight, x + r + earWidth, y - rightEarHeight);
+    ctx.quadraticCurveTo(x + r, y - rightEarHeight, x + r, y);
 
-    ctx.quadraticCurveTo(x + r, y - r, x, y - r);
+    ctx.quadraticCurveTo(x + r, y - r, topX, y - r);
 
     ctx.stroke();
 
@@ -148,7 +151,20 @@ function getFacePos() {
 
   return {
     center,
+    nose: screenToCanvas(nose),
     width: Math.abs((leftEye.x - leftEye.width) - (rightEye.x + rightEye.width)),
+    leftEye: screenToCanvas({
+      x: leftEye.x,
+      y: leftEye.y,
+      width: leftEye.width,
+      height: leftEye.height,
+    }),
+    rightEye: screenToCanvas({
+      x: rightEye.x,
+      y: rightEye.y,
+      width: rightEye.width,
+      height: rightEye.height,
+    }),
     mouth: screenToCanvas({
       x: mouth.x,
       y: mouth.y,
