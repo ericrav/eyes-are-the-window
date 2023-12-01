@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   getBrowserWarning();
-
+  window.localStorage.clear();
   drawFace();
 
   start.style.display = 'block';
@@ -94,16 +94,34 @@ function drawFace() {
     ctx.save()
     ctx.strokeStyle = 'blue';
     ctx.fillStyle = 'transparent';
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 3;
 
     ctx.translate(canvas.width / 2, canvas.height / 2);
     const face = getFacePos();
 
-    ctx.beginPath();
     const r = face ? face.width : Math.min(canvas.width, canvas.height) / 3;
-
     const { x, y } = face ? face.center : { x: 0, y: 0 };
-    ctx.arc(x, y, r, 0, 2 * Math.PI);
+
+    const leftEarHeight = r * 0.25;
+    const earWidth = r * 0.1;
+
+    ctx.beginPath();
+    ctx.moveTo(x, y - r);
+    ctx.quadraticCurveTo(x-r, y-r, x - r, y);
+
+    ctx.quadraticCurveTo(x - r, y - leftEarHeight, x - r - earWidth, y - leftEarHeight);
+    ctx.quadraticCurveTo(x - r - earWidth*2, y - leftEarHeight, x - r - earWidth, y + leftEarHeight*0.75);
+    ctx.quadraticCurveTo(x - r, y + leftEarHeight*1.75, x - r, y + leftEarHeight*0.75);
+
+    ctx.quadraticCurveTo(x - r, y + r, x, y + r);
+
+    ctx.quadraticCurveTo(x + r, y + r, x + r, y + leftEarHeight*0.75);
+    ctx.quadraticCurveTo(x + r, y + leftEarHeight*1.75, x + r + earWidth, y + leftEarHeight*0.75);
+    ctx.quadraticCurveTo(x + r + earWidth*2, y - leftEarHeight, x + r + earWidth, y - leftEarHeight);
+    ctx.quadraticCurveTo(x + r, y - leftEarHeight, x + r, y);
+
+    ctx.quadraticCurveTo(x + r, y - r, x, y - r);
+
     ctx.stroke();
 
     ctx.restore()
