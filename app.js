@@ -100,12 +100,12 @@ function drawFace() {
     ctx.save()
     ctx.strokeStyle = 'blue';
     ctx.fillStyle = 'transparent';
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 4;
 
     ctx.translate(canvas.width / 2, canvas.height / 2);
     const face = getFacePos();
 
-    const r = face ? face.width : Math.min(canvas.width, canvas.height) / 3;
+    let r = face ? face.width : Math.min(canvas.width, canvas.height) / 3;
     const { x, y } = face ? face.center : { x: 0, y: 0 };
 
     const leftEarHeight = face ? face.leftEye.height*1.5 : r * 0.25;
@@ -115,6 +115,9 @@ function drawFace() {
     const chin = face ? { x: face.mouth.x, y: face.mouth.y + face.mouth.height*1.5, height: face.mouth.height } : { x, y: r, height: 0 };
 
     const topX = face ? face.nose.x : x;
+
+    const noseWidth = face ? face.nose.width : r*0.5;
+    r = r*0.85 + noseWidth*0.5;
 
     ctx.beginPath();
     ctx.moveTo(topX, y - r);
