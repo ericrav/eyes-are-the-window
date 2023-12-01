@@ -127,12 +127,19 @@ function drawFace() {
     ctx.quadraticCurveTo(x - r - earWidth*2, leftEarTop, x - r - earWidth, leftEarBottom);
     ctx.quadraticCurveTo(x - r, leftEarBottom + leftEarHeight*0.75, x - r, leftEarBottom);
 
-    ctx.bezierCurveTo(x - r, y + r, chin.x - chin.height*0.5, chin.y, chin.x, chin.y + chin.height*0.25);
-    ctx.bezierCurveTo(chin.x + chin.height*0.5, chin.y, x + r, y + r, x + r, y + rightEarHeight*0.75);
 
-    ctx.quadraticCurveTo(x + r, y + rightEarHeight*1.75, x + r + earWidth, y + rightEarHeight*0.75);
-    ctx.quadraticCurveTo(x + r + earWidth*2, y - rightEarHeight, x + r + earWidth, y - rightEarHeight);
-    ctx.quadraticCurveTo(x + r, y - rightEarHeight, x + r, y);
+    const chinBottom = chin.y + chin.height*2;
+    const chinWidth = face ? face.mouth.width*0.5 : r * 0.5;
+    ctx.bezierCurveTo(x - r, chin.y, chin.x - chinWidth, chinBottom, chin.x, chinBottom);
+
+    const rightEarY = face ? face.rightEye.y : y;
+    const rightEarTop = face ? face.rightEye.y - face.rightEye.height*0.5 : y - rightEarHeight;
+    const rightEarBottom = rightEarTop + rightEarHeight*1.75;
+    ctx.bezierCurveTo(chin.x + chinWidth, chinBottom, x + r, chin.y, x + r, rightEarBottom);
+
+    ctx.quadraticCurveTo(x + r, rightEarBottom + rightEarHeight*0.75, x + r + earWidth, rightEarBottom);
+    ctx.quadraticCurveTo(x + r + earWidth*2, rightEarTop, x + r + earWidth, rightEarTop);
+    ctx.quadraticCurveTo(x + r, rightEarTop, x + r, rightEarY);
 
     ctx.quadraticCurveTo(x + r, y - r, topX, y - r);
 
