@@ -105,6 +105,8 @@ function drawFace() {
     const leftEarHeight = r * 0.25;
     const earWidth = r * 0.1;
 
+    const chin = face ? { x: face.mouth.x, y: face.mouth.y + r*0.5, height: face.mouth.height } : { x, y: r, height: 0 };
+
     ctx.beginPath();
     ctx.moveTo(x, y - r);
     ctx.quadraticCurveTo(x-r, y-r, x - r, y);
@@ -113,9 +115,9 @@ function drawFace() {
     ctx.quadraticCurveTo(x - r - earWidth*2, y - leftEarHeight, x - r - earWidth, y + leftEarHeight*0.75);
     ctx.quadraticCurveTo(x - r, y + leftEarHeight*1.75, x - r, y + leftEarHeight*0.75);
 
-    ctx.quadraticCurveTo(x - r, y + r, x, y + r);
+    ctx.quadraticCurveTo(x - r, y + chin.y + chin.height, chin.x, chin.y);
+    ctx.quadraticCurveTo(x + r, y + chin.y + chin.height, x + r, y + leftEarHeight*0.75);
 
-    ctx.quadraticCurveTo(x + r, y + r, x + r, y + leftEarHeight*0.75);
     ctx.quadraticCurveTo(x + r, y + leftEarHeight*1.75, x + r + earWidth, y + leftEarHeight*0.75);
     ctx.quadraticCurveTo(x + r + earWidth*2, y - leftEarHeight, x + r + earWidth, y - leftEarHeight);
     ctx.quadraticCurveTo(x + r, y - leftEarHeight, x + r, y);
@@ -147,11 +149,18 @@ function getFacePos() {
   return {
     center,
     width: Math.abs((leftEye.x - leftEye.width) - (rightEye.x + rightEye.width)),
+    mouth: screenToCanvas({
+      x: mouth.x,
+      y: mouth.y,
+      width: mouth.width,
+      height: mouth.height,
+    })
   }
 }
 
-function screenToCanvas({ x, y }) {
+function screenToCanvas({ x, y, ...rest }) {
   return {
+    ...rest,
     x: x - window.screenX - window.innerWidth / 2,
     y: y - window.screenY - window.innerHeight / 2,
   }
