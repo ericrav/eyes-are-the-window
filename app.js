@@ -33,45 +33,51 @@ document.addEventListener('DOMContentLoaded', () => {
     start.style.display = 'none';
     await initFaceTracking();
 
-    const getWindowFeatures = (x, y, width, height) => {
-      return csv({
-        popup: true,
-        width,
-        height,
-        left: Math.floor(window.screen.availWidth / 2 - width / 2) + x + window.screenX,
-        top: Math.floor(window.screen.availHeight / 2 - height / 2) + y + window.screenY,
-      });
-    };
+    function openPopups() {
+      const getWindowFeatures = (x, y, width, height) => {
+        return csv({
+          popup: true,
+          width,
+          height,
+          left: Math.floor(window.screen.availWidth / 2 - width / 2) + x + window.screenX,
+          top: Math.floor(window.screen.availHeight / 2 - height / 2) + y + window.screenY,
+        });
+      };
 
-    let w;
-    w = window.open(
-      '#leftEye',
-      'leftEye',
-      getWindowFeatures(-225, 0, 300, 175)
-    );
-    if (!w) {
-      alert('Please allow popups and refresh page');
-      return;
+      let w;
+      w = window.open(
+        '#leftEye',
+        'leftEye',
+        getWindowFeatures(-225, 0, 300, 175)
+      );
+      if (!w) {
+        alert('Please allow popups and refresh page');
+        return;
+      }
+      w = window.open(
+        '#rightEye',
+        'rightEye',
+        getWindowFeatures(225, 0, 300, 175)
+      );
+      if (!w) {
+        alert('Please allow popups and refresh page');
+        return;
+      }
+      w = window.open('#mouth', 'mouth', getWindowFeatures(0, 250, 750, 250));
+      if (!w) {
+        alert('Please allow popups and refresh page');
+        return;
+      }
+      w = window.open('#nose', 'nose', getWindowFeatures(0, 25, 200, 275));
+      if (!w) {
+        alert('Please allow popups and refresh page');
+        return;
+      }
     }
-    w = window.open(
-      '#rightEye',
-      'rightEye',
-      getWindowFeatures(225, 0, 300, 175)
-    );
-    if (!w) {
-      alert('Please allow popups and refresh page');
-      return;
-    }
-    w = window.open('#mouth', 'mouth', getWindowFeatures(0, 250, 750, 250));
-    if (!w) {
-      alert('Please allow popups and refresh page');
-      return;
-    }
-    w = window.open('#nose', 'nose', getWindowFeatures(0, 25, 200, 275));
-    if (!w) {
-      alert('Please allow popups and refresh page');
-      return;
-    }
+
+    openPopups();
+
+    window.addEventListener('click', openPopups);
   });
 });
 
@@ -112,11 +118,14 @@ function drawFace() {
 
     ctx.beginPath();
     ctx.moveTo(topX, y - r);
-    ctx.quadraticCurveTo(x-r, y-r, x - r, y);
+    const leftEarY = face ? face.leftEye.y : y;
+    const leftEarTop = face ? face.leftEye.y - face.leftEye.height*0.5 : y - leftEarHeight;
+    const leftEarBottom = leftEarTop + leftEarHeight*1.75;
+    ctx.quadraticCurveTo(x-r, y-r, x - r, leftEarY);
 
-    ctx.quadraticCurveTo(x - r, y - leftEarHeight, x - r - earWidth, y - leftEarHeight);
-    ctx.quadraticCurveTo(x - r - earWidth*2, y - leftEarHeight, x - r - earWidth, y + leftEarHeight*0.75);
-    ctx.quadraticCurveTo(x - r, y + leftEarHeight*1.75, x - r, y + leftEarHeight*0.75);
+    ctx.quadraticCurveTo(x - r, leftEarTop, x - r - earWidth, leftEarTop);
+    ctx.quadraticCurveTo(x - r - earWidth*2, leftEarTop, x - r - earWidth, leftEarBottom);
+    ctx.quadraticCurveTo(x - r, leftEarBottom + leftEarHeight*0.75, x - r, leftEarBottom);
 
     ctx.bezierCurveTo(x - r, y + r, chin.x - chin.height*0.5, chin.y, chin.x, chin.y + chin.height*0.25);
     ctx.bezierCurveTo(chin.x + chin.height*0.5, chin.y, x + r, y + r, x + r, y + rightEarHeight*0.75);
@@ -204,10 +213,10 @@ async function drawCanvas(name) {
     canvas.height = window.innerHeight * 2;
 
     const pos = {
-      x: window.screenX + window.outerWidth*0.5,
-      y: window.screenY + window.outerHeight*0.5,
-      width: window.outerWidth,
-      height: window.outerHeight,
+      x: window.screenX + window.innerWidth*0.5,
+      y: window.screenY + window.innerHeight*0.5,
+      width: window.innerWidth,
+      height: window.innerHeight,
     };
     console.log(pos);
     window.localStorage.setItem(name + 'Window', JSON.stringify(pos));
